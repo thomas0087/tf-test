@@ -22,7 +22,7 @@ data "aws_ami" "barry_image" {
 
   filter {
     name   = "name"
-    values = ["ubuntu/images/hvm-ssd/ubuntu-focal-20.04-amd64-server-*"]
+    values = ["nib-base-win2022-1-*-master"]
   }
 
   filter {
@@ -30,7 +30,7 @@ data "aws_ami" "barry_image" {
     values = ["hvm"]
   }
 
-  owners = ["099720109477"] # Canonical's account ID
+  owners = ["441581275790"] # Control General's account ID
 }
 
 # Define the security group (and ignore some tfsec findings as some open ports are required for the instance to function properly)
@@ -40,17 +40,19 @@ resource "aws_security_group" "barry" {
   description = "Barry's security group"
 
   ingress {
-    from_port   = 22
-    to_port     = 22
+    from_port   = 443
+    to_port     = 443
     protocol    = "tcp"
     cidr_blocks = ["0.0.0.0/0"]
+    description = "Allow inbound traffic from all sources on port 443"
   }
 
   egress {
-    from_port   = 0
-    to_port     = 0
-    protocol    = "-1"
+    from_port   = 443
+    to_port     = 443
+    protocol    = "tcp"
     cidr_blocks = ["0.0.0.0/0"]
+    description = "Allow outbound traffic from all sources on port 443"
   }
 }
 
@@ -90,9 +92,15 @@ resource "aws_iam_instance_profile" "barry" {
 # Define the EC2 instance
 resource "aws_instance" "barry" {
   ami           = data.aws_ami.barry_image.id
-  instance_type = "t2.micro"
+  instance_type = "m7g.micro"
   vpc_security_group_ids = [aws_security_group.barry.id]
   iam_instance_profile = aws_iam_instance_profile.barry.name
+
+  user_data = <<EOF
+        <powershell>
+          powershell.exe -File C:\Configure-Instance.ps1
+        </powershell>
+        EOF
 
   root_block_device {
     encrypted = "true"
