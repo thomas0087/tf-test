@@ -1,0 +1,17 @@
+services:
+  localtf:
+    image: hashicorp/terraform:1.7
+    working_dir: /work
+    volumes:
+      - .:/work
+
+  tfsec:
+    image: aquasec/tfsec:v1.28
+    volumes:
+      - .:/work
+
+  tflint:
+    image: ghcr.io/terraform-linters/tflint:v0.50.3
+    working_dir: /work
+    volumes:
+      - .:/work
