@@ -14,13 +14,19 @@ To use this project with Docker, follow these steps:
 
 1. Clone the repository to your local machine.
 2. Navigate to the directory containing the project.
-3. Check for vulnerabilities with TFSec
+3. Initalise Terraform
+
+    ```bash
+    docker-compose run --rm localtf init
+    ```
+
+4. Check for vulnerabilities with TFSec
 
     ```bash
     docker-compose run --rm tfsec /work
     ```
 
-4. Check linting and formatting
+5. Check linting and formatting
 
     ```bash
     docker-compose run --rm tflint
@@ -28,7 +34,7 @@ To use this project with Docker, follow these steps:
     docker-compose run --rm localtf validate
     ```
 
-5. Run tests. All bar one of these tests will fail until you have completed the tasks below 🤓
+6. Run tests. All bar one of these tests will fail until you have completed the tasks below 🤓
 
     ```bash
     docker-compose run --rm localtf test
